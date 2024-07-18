@@ -1,0 +1,29 @@
+- name: Install Python
+  ansible.builtin.dnf:
+    name:
+      - python3
+      - gcc
+      - python3-devel
+    state: latest
+
+- name: Setup  App Prerequisites
+  ansible.builtin.include_role:
+    name: common
+    task_from: app_prereq
+
+- name: Download Dependencies
+  ansible.builtin.shell: pip3 install -r requirements.txt
+  args:
+    chdir: "{{ app_path }}"
+
+
+- name: SCHEMA_SETUP
+  ansible.builtin.include_role:
+    name: common
+    task_from: schema
+  when: schema_setup is defined
+
+- name: SYSTEMD_SETUP
+  ansible.builtin.include_role:
+    name: common
+    task_from: systemd

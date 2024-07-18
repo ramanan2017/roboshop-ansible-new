@@ -1,0 +1,5 @@
+component: catalogue
+app-path: /aoo
+schema_setup: mongo
+schema_files:
+  -master-data

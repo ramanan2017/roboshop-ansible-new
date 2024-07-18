@@ -1,0 +1,63 @@
+- name: Load MongoDb Schema
+  when: schema_setup == "mongo"
+  block:
+    - name: COpy MongoDB repo file
+      ansible.builtin.copy:
+        src: mongo.repo
+        dest: /etc/yum.repos.d/mongo.repo
+
+    - name: Install MongoDB Client
+      ansible.builtin.dnf:
+        name: mongodb-mongosh
+        state: latest
+
+    - name: Load Master Data
+      ansible.builtin.shell: mongosh --host mongo.{{ env }}.ramdevops.co.uk</app/db/{{ item }}.js
+      loop: "{{ schema_files }}"
+
+- name: Load MySQL Schema
+  when: schema_setup == "mysql"
+  block:
+    - name: Install mysql Client
+      ansible.builtin.dnf:
+        name: mysql
+        state: latest
+
+    - name: Load Master Data
+      ansible.builtin.shell: mysql -h mysql.{{ env  }}.ramdevops.co.uk -uroot -pRoboShop@1 < /app/db/{{ item }}.sql
+      loop: "{{ schema_files }}"
+
+
+
+
+
+
+
+
+
+#if [ "$schema_setup" == "mongo" ]; then
+#PRINT COpy MongoDB repo file
+#cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
+#STAT $?
+#
+#PRINT Install MongoDB Client
+#dnf install mongodb-mongosh -y &>>$LOG_FILE
+#STAT $?
+#
+#PRINT Load Master Data
+#mongosh --host mongo.{{ env  }}.rdevopsb80.online </app/db/master-data.js &>>$LOG_FILE
+#STAT $?
+#fi
+#
+#if [ "$schema_setup" == "mysql" ]; then
+#PRINT Install MySQL Client
+#dnf install mysql -y &>>$LOG_FILE
+#STAT $?
+#
+#for file in schema master-data app-user; do
+#PRINT Load file - $file.sql
+#mysql -h mysql.{{ env  }}.rdevopsb80.online -uroot -pRoboShop@1 < /app/db/$file.sql &>>$LOG_FILE
+#STAT $?
+#done
+#
+#fi

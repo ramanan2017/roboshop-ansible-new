@@ -1,0 +1,8 @@
+- name: SETUP JAVA Service
+  ansible.builtin.include_role:
+    name: common
+    task_from: jave
+
+
+
+#JAVA
